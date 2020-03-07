@@ -139,7 +139,7 @@ print(paste("full_set rows:",dim(full_set)[1]))
 
 ################ SECOND TIDY SET ######################
 
-## use dplyr and data.table fwrite to create a separate tidy data set of the mean of all the variables by subject and activity
+## use dplyr and write.table to create a separate tidy data set of the mean of all the variables by subject and activity
 ## write this to a file grouped.txt
 
 grouped<-full_set %>% 
