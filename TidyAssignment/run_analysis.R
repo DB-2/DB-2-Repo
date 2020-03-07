@@ -145,5 +145,5 @@ print(paste("full_set rows:",dim(full_set)[1]))
 grouped<-full_set %>% 
         group_by(subject,activity) %>% 
         summarise_all(mean)
-
+ 
 write.table(grouped, file="grouped.txt", sep=" ", row.names = FALSE)

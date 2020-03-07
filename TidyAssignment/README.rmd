@@ -40,7 +40,7 @@ You should create one R script called run_analysis.R that does the following.
 
 ## Components 
 The solution to the project definition is made up of the following components stored in github
-[]
+[https://github.com/DB-2/DB-2-Repo/tree/master/TidyAssignment]
 
 1. this **Readme.rmd** which explains the solution to the project definition and how the components
    are linked together.
