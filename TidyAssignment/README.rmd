@@ -1,0 +1,270 @@
+---
+title: Getting and Cleaning Data Project - "README"
+author: "DBarry"
+date: "3/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction 
+This document is a Readme for the **Getting and Cleaning Data Course Project** as part of the John Hopkiins University Data Specialisation course
+
+## Purpose 
+The README outlines the purpose of the project and the software components, files, datasets and documents that make up this project solution
+
+This document is an extention of the **Human Activity Recognition Using Smartphones Dataset** original README referenced below as it builds on the data produced as part of that study.
+The original datasets used as a starting point are used under licence referenced in [1] below.
+
+In order to fully appreciate what how the run_analysis.R solution works the README, codebook(features_info.txt) and files for the original project should be reviewed.
+
+## Project Definition - Excerpt
+The following paragraph is an excerpt from the assignment webpage outlining the project
+definition to which a solution is required.
+
+"The purpose of this project is to demonstrate your ability to collect work with, and clean a data set. The goal is to prepare tidy data that can be used for later analysis. You will be graded by your peers on a series of yes/no questions related to the project. You will be required to submit: 1) a tidy data set as described below, 2) a link to a Github repository with your script for performing the analysis, and 3) a code book that describes the variables, the data, and any transformations or work that you performed to clean up the data called CodeBook.md. You should also include a README.md in the repo with your scripts. This repo explains how all of the scripts work and how they are connected.
+
+You should create one R script called run_analysis.R that does the following.
+
+1. Merges the training and the test sets to create one data set.
+
+2. Extracts only the measurements on the mean and standard deviation for each measurement.
+
+3. Uses descriptive activity names to name the activities in the data set
+
+4. Appropriately labels the data set with descriptive variable names.
+
+5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject."
+
+## Components 
+The solution to the project definition is made up of the following components stored in github
+[]
+
+1. this **Readme.rmd** which explains the solution to the project definition and how the components
+   are linked together.
+2. **run_analysis.R** 
+   an R script to read in the original datasets (see read file code excerpt)
+   and using various R functions and packages re-assemble the original datasets into a single 
+   Tidy data frame ( as per definition below) before mean values are calculated for all
+   variables grouped by subject and activity. A csv file of this data is the created using
+   fwrite (see fwrite file code except).
+3. **getting_cleaning_data_project_codebook.rmd** 
+   A rmd document containing the definition of all column values produced in the grouped.txt
+   file by the run_analysis.R script mentioned above, their meaning and origin. Additional 
+   information can be found in the origial projects codebook features_info.txt 
+4. **grouped.txt** 
+   A space delimited txt file mentioned above containing the average(mean) of all measurements    relating to the training and test measurement data referenced in the features_info.txt 
+   below and in the codebook grouped by each test subject that took part in the original study
+   and the activities they performed as part of that study    
+5. **Input files used from original study** 
++ X_test.txt
+
++ y_test.txt
+
++ subject_test.txt
+
++ X_train.txt
+
++ y_train.txt
+
++ subject_train.txt
+
++ activity_labels.txt
+
++ features.txt
+   
+Descriptions below
+   
+## Pseudo Code/Script summary 
+
+the run_analysis.R script performs the following:
+
++ read the **X-test** measuremment data, **y-test** activity and the **subject test** files
+
++ repeat the same for the equivalent **train** files
+
++ read the **activity labels** description file and the measurement **features** file
+
++ create a vector of column indexes from the features file based on mean and std description of   the variables
+
++ use this to subset the train and test data tables
+
++ use it also to replace the column names with more descriptive names in train and test files also prefixing them with the string "mean-" to show their ultimate state as averaged variables in the final tidy data set csv files produced.
+
++ cbind the subject and y activity data tables for both test and train data
+
++ cbind above to the equivalent test and train data tables
+
++ finally rbind both combined test and train data tables and merge with the activity description by activity code
+
++ group the data table by subject and activity and get the mean of all variables (hence "mean-" prefix step above)
+
++ write the above as a csv called **grouped.csv**
+
+
+## File reads summary 
+
+This section outlines the code commands used to read in the files
+
+```
+############ TEST FILES SECTION ############
+
+## Read the X_test file
+## Print the number of rows of each DF as you go to ensure correct row alignment
+## Read the y_test activity file
+## Read the test subjects file
+
+X_test<-read.table(file="X_test.txt", sep = "",header = F,colClasses = c("numeric"), na.strings ="NA",stringsAsFactors= F)
+print(paste("X_test rows:",dim(X_test)[1]))
+
+y_test<-read.table(file="y_test.txt", sep = "",header = F, col.names=c("activityCode"),na.strings ="NA", stringsAsFactors= F)
+print(paste("y_test rows:",dim(y_test)[1]))
+
+
+subj_test<-read.table(file="subject_test.txt", sep = "",header = F, col.names=c("subject"), na.strings ="NA", stringsAsFactors= F)
+print(paste("subj_test rows:",dim(subj_test)[1]))
+
+############## TRAIN FILES SECTION ############
+
+## Read the X_train file
+## Print the number of rows of each DF as you go to ensure correct alignment
+## Read the y_train activity file
+## Read the train subjects file
+
+X_train<-read.table(file="X_train.txt", sep = "",header = F,colClasses = c("numeric"), na.strings ="NA",stringsAsFactors= F)
+print(paste("X_train rows:",dim(X_train)[1]))
+
+y_train<-read.table(file="y_train.txt", sep = "",header = F, col.names=c("activityCode"),na.strings ="NA", stringsAsFactors= F)
+print(paste("y_train rows:",dim(y_train)[1]))
+
+subj_train<-read.table(file="subject_train.txt", sep = "",header = F, col.names=c("subject"), na.strings ="NA",stringsAsFactors= F)
+print(paste("subj_train rows:",dim(subj_train)[1]))
+
+############ ACTIVITY AND FEATURES SECTION ##################
+
+## Read the activity_labels file to get the acivity description for later merging
+## Read the features file which ultimately reflects the list of X_test and X_train column names
+## as these files are from the same source split in two
+## Extract only those feature names that have the string mean or std in it
+## the features obs number can be used to construct a vector of column indexes
+## to subset the X_test & X_train data frame for the desired columns required (Assignment task 2)
+## the features column name can also be used to change the default var column names
+## to the more descriptive feature column names (Assignment task 4)
+## Also, prefix each of the column names at this point with the prefix "mean-" to inidcate that final variables both those mean and std 
+## will be an average of the mean and std variables by subject and activity. This is the easiest point to do this operation
+## although the data has not technically been averaged as yet
+
+activity_desc<-read.table(file="activity_labels.txt", sep = "",header = F,col.names=c("activityCode","activity"), na.strings ="NA", stringsAsFactors= F)
+print(paste("activity_desc rows:",dim(activity_desc)[1]))
+
+features<-read.table(file="features.txt", sep = "",header = F,col.names=c("colIndex","colName"), na.strings ="NA", stringsAsFactors= F)
+print(paste("features rows:",dim(features)[1]))
+
+
+```
+
+# Original Readme
+
+==================================================================
+
+Human Activity Recognition Using Smartphones Dataset
+Version 1.0
+==================================================================
+Jorge L. Reyes-Ortiz, Davide Anguita, Alessandro Ghio, Luca Oneto.
+Smartlab - Non Linear Complex Systems Laboratory
+DITEN - Università degli Studi di Genova.
+Via Opera Pia 11A, I-16145, Genoa, Italy.
+activityrecognition@smartlab.ws
+www.smartlab.ws
+==================================================================
+
+The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years. Each person performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist. Using its embedded accelerometer and gyroscope, we captured 3-axial linear acceleration and 3-axial angular velocity at a constant rate of 50Hz. The experiments have been video-recorded to label the data manually. The obtained dataset has been randomly partitioned into two sets, where 70% of the volunteers was selected for generating the training data and 30% the test data. 
+
+The sensor signals (accelerometer and gyroscope) were pre-processed by applying noise filters and then sampled in fixed-width sliding windows of 2.56 sec and 50% overlap (128 readings/window). The sensor acceleration signal, which has gravitational and body motion components, was separated using a Butterworth low-pass filter into body acceleration and gravity. The gravitational force is assumed to have only low frequency components, therefore a filter with 0.3 Hz cutoff frequency was used. From each window, a vector of features was obtained by calculating variables from the time and frequency domain. See 'features_info.txt' for more details. 
+
+For each record it is provided:
+======================================
+
+- Triaxial acceleration from the accelerometer (total acceleration) and the estimated body acceleration.
+- Triaxial Angular velocity from the gyroscope. 
+- A 561-feature vector with time and frequency domain variables. 
+- Its activity label. 
+- An identifier of the subject who carried out the experiment.
+
+The dataset includes the following files:
+=========================================
+
+- 'README.txt'
+
+- 'features_info.txt': Shows information about the variables used on the feature vector.
+
+- 'features.txt': List of all features.
+
+- 'activity_labels.txt': Links the class labels with their activity name.
+
+- 'train/X_train.txt': Training set.
+
+- 'train/y_train.txt': Training labels.
+
+- 'test/X_test.txt': Test set.
+
+- 'test/y_test.txt': Test labels.
+
+The following files are available for the train and test data. Their descriptions are equivalent. 
+
+- 'train/subject_train.txt': Each row identifies the subject who performed the activity for each window sample. Its range is from 1 to 30. 
+
+- 'train/Inertial Signals/total_acc_x_train.txt': The acceleration signal from the smartphone accelerometer X axis in standard gravity units 'g'. Every row shows a 128 element vector. The same description applies for the 'total_acc_x_train.txt' and 'total_acc_z_train.txt' files for the Y and Z axis. 
+
+- 'train/Inertial Signals/body_acc_x_train.txt': The body acceleration signal obtained by subtracting the gravity from the total acceleration. 
+
+- 'train/Inertial Signals/body_gyro_x_train.txt': The angular velocity vector measured by the gyroscope for each window sample. The units are radians/second. 
+
+Notes: 
+======
+- Features are normalized and bounded within [-1,1].
+- Each feature vector is a row on the text file.
+
+For more information about this dataset contact: activityrecognition@smartlab.ws
+
+License:
+========
+Use of this dataset in publications must be acknowledged by referencing the following publication [1] 
+
+[1] Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz. Human Activity Recognition on Smartphones using a Multiclass Hardware-Friendly Support Vector Machine. International Workshop of Ambient Assisted Living (IWAAL 2012). Vitoria-Gasteiz, Spain. Dec 2012
+
+This dataset is distributed AS-IS and no responsibility implied or explicit can be addressed to the authors or their institutions for its use or misuse. Any commercial use is prohibited.
+
+Jorge L. Reyes-Ortiz, Alessandro Ghio, Luca Oneto, Davide Anguita. November 2012.
+
+## References
+
+**[1] Original Study**
+[Jorge L. Reyes-Ortiz(1,2), Davide Anguita(1), Alessandro Ghio(1), Luca Oneto(1) and Xavier Parra(2)
+1 - Smartlab - Non-Linear Complex Systems Laboratory
+DITEN - Università degli Studi di Genova, Genoa (I-16145), Italy.
+2 - CETpD - Technical Research Centre for Dependency Care and Autonomous Living
+Universitat Politècnica de Catalunya (BarcelonaTech). Vilanova i la Geltrú (08800), Spain
+activityrecognition '@' smartlab.ws
+http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones]
+
+**[2] Tidy data definition**
+[as per Tidy Data definition, Hadley Wickham, http://vita.had.co.nz/papers/tidy-data.pdf]
+
+**[3] Packages used: dplyr**
+[Hadley Wickham, Romain François, Lionel Henry and Kirill Müller (2020). dplyr: A Grammar
+  of Data Manipulation. R package version 0.8.4. https://CRAN.R-project.org/package=dplyr]
+
+**[4] Packages used: data.table**  
+[ Matt Dowle and Arun Srinivasan (2019). data.table: Extension of `data.frame`. R package
+  version 1.12.8. https://CRAN.R-project.org/package=data.table]
+  
+**[5] R Software**
+[R Core Team (2019). R: A language and environment for statistical computing. R
+  Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.]
+
+**[6] Project Definition**
+[Getting and Cleaning Data by Johns Hopkins University, https://www.coursera.org/learn/data-cleaning/peer/FIZtT/getting-and-cleaning-data-course-project]
+  

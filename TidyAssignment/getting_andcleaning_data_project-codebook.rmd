@@ -1,0 +1,276 @@
+---
+title: "Getting and Cleaning Data Project codebook"
+author: "DBarry"
+date: "3/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction 
+This document is the codebook for the **Getting and Cleaning Data Course Project** as part of the John Hopkiins University Data Specialisation course
+
+## Purpose 
+The purpose of this codebook is to outline the content of the tidied file, **grouped.txt**, the output from the **run_analysis.R** script based on input files to be tidied from the original study
+**Human Activity Recognition Using Smartphones Dataset** referenced below 
+
+The original datasets used as a starting point are used under licence referenced in [1] below.
+
+In order to fully appreciate how the run_analysis.R solution works its README.rmd and the README, codebook(features_info.txt) and files for the original project should be reviewed.
+
+## Description
+The background definition of the variables within the ouput file is described in the excerpt
+of the original coodebook below.
+
+"The features selected for this database come from the accelerometer and gyroscope 3-axial raw signals tAcc-XYZ and tGyro-XYZ. These time domain signals (prefix 't' to denote time) were captured at a constant rate of 50 Hz. Then they were filtered using a median filter and a 3rd order low pass Butterworth filter with a corner frequency of 20 Hz to remove noise. Similarly, the acceleration signal was then separated into body and gravity acceleration signals (tBodyAcc-XYZ and tGravityAcc-XYZ) using another low pass Butterworth filter with a corner frequency of 0.3 Hz. 
+
+Subsequently, the body linear acceleration and angular velocity were derived in time to obtain Jerk signals (tBodyAccJerk-XYZ and tBodyGyroJerk-XYZ). Also the magnitude of these three-dimensional signals were calculated using the Euclidean norm (tBodyAccMag, tGravityAccMag, tBodyAccJerkMag, tBodyGyroMag, tBodyGyroJerkMag). 
+
+Finally a Fast Fourier Transform (FFT) was applied to some of these signals producing 
+
++ fBodyAcc-XYZ, 
+
++ fBodyAccJerk-XYZ, 
+
++ fBodyGyro-XYZ, 
+
++ fBodyAccJerkMag, 
+
++ fBodyGyroMag, 
+
++ fBodyGyroJerkMag. (Note the 'f' to indicate frequency domain signals). 
+
+These signals were used to estimate variables of the feature vector for each pattern:  
+'-XYZ' is used to denote 3-axial signals in the X, Y and Z directions.
+
++ tBodyAcc-XYZ
+
++ tGravityAcc-XYZ
+
++ tBodyAccJerk-XYZ
+
++ tBodyGyro-XYZ
+
++ tBodyGyroJerk-XYZ
+
++ tBodyAccMag
+
++ tGravityAccMag
+
++ tBodyAccJerkMag
+
++ tBodyGyroMag
+
++ tBodyGyroJerkMag
+
++ fBodyAcc-XYZ
+
++ fBodyAccJerk-XYZ
+
++ fBodyGyro-XYZ
+
++ fBodyAccMag
+
++ fBodyAccJerkMag
+
++ fBodyGyroMag
+
++ fBodyGyroJerkMag
+
+Additional vectors obtained by averaging the signals in a signal window sample. These are used on the angle() variable:
+
++ gravityMean
+
++ tBodyAccMean
+
++ tBodyAccJerkMean
+
++ tBodyGyroMean
+
++ tBodyGyroJerkMean
+
+The complete list of variables of each feature vector is available in 'features.txt'"
+
+**This codebook**
+
+The subset of data described by this codebook is based  set of variables described above where the **mean(): Mean value** and **std(): Standard deviation** variables were identfied and a subset taken.
+
+The run_analysis.R script then tidied this data joining it with the test subject identifier and activity performed by the subject, activityCode, a long description, activity, describing the activity in english.
+
+The mean of the 79 mean/std related variables from the original study was then calculated by the number of subjects and the activity they performed
+
+
++ subject  - the test subject identifier who took part in the test
+
++ activity - the description of the activities they performed as part of the test
+
++ activityCode - the original activity code identifier from the activities label file and train and test files 
+
+The following variables are the averaged original mean and std variables for the data described above in the original features file. They have all been prefixed with "mean-" after they mean was calculated to distinguish them from the originals having different content.
+
++ mean-tBodyAcc-std()-X
+
++ mean-tBodyAcc-std()-Y
+
++ mean-tBodyAcc-std()-Z
+
++ mean-tGravityAcc-mean()-X
+
++ mean-tGravityAcc-mean()-Y
+
++ mean-tGravityAcc-mean()-Z
+
++ mean-tGravityAcc-std()-X
+
++ mean-tGravityAcc-std()-Y
+
++ mean-tGravityAcc-std()-Z
+
++ mean-tBodyAccJerk-mean()-X
+
++ mean-tBodyAccJerk-mean()-Y
+
++ mean-tBodyAccJerk-mean()-Z
+
++ mean-tBodyAccJerk-std()-X
+
++ mean-tBodyAccJerk-std()-Y
+
++ mean-tBodyAccJerk-std()-Z
+
++ mean-tBodyGyro-mean()-X
+
++ mean-tBodyGyro-mean()-Y
+
++ mean-tBodyGyro-mean()-Z
+
++ mean-tBodyGyro-std()-X
+
++ mean-tBodyGyro-std()-Y
+
++ mean-tBodyGyro-std()-Z
+
++ mean-tBodyGyroJerk-mean()-X
+
++ mean-tBodyGyroJerk-mean()-Y
+
++ mean-tBodyGyroJerk-mean()-Z
+
++ mean-tBodyGyroJerk-std()-X
+
++ mean-tBodyGyroJerk-std()-Y
+
++ mean-tBodyGyroJerk-std()-Z
+
++ mean-tBodyAccMag-mean()
+
++ mean-tBodyAccMag-std()
+
++ mean-tGravityAccMag-mean()
+
++ mean-tGravityAccMag-std()
+
++ mean-tBodyAccJerkMag-mean()
+
++ mean-tBodyAccJerkMag-std()
+
++ mean-tBodyGyroMag-mean()
+
++ mean-tBodyGyroMag-std()
+
++ mean-tBodyGyroJerkMag-mean()
+
++ mean-tBodyGyroJerkMag-std()
+
++ mean-fBodyAcc-mean()-X
+
++ mean-fBodyAcc-mean()-Y
+
++ mean-fBodyAcc-mean()-Z
+
++ mean-fBodyAcc-std()-X
+
++ mean-fBodyAcc-std()-Y
+
++ mean-fBodyAcc-std()-Z
+
++ mean-fBodyAcc-meanFreq()-X
+
++ mean-fBodyAcc-meanFreq()-Y
+
++ mean-fBodyAcc-meanFreq()-Z
+
++ mean-fBodyAccJerk-mean()-X
+
++ mean-fBodyAccJerk-mean()-Y
+
++ mean-fBodyAccJerk-mean()-Z
+
++ mean-fBodyAccJerk-std()-X
+
++ mean-fBodyAccJerk-std()-Y
+
++ mean-fBodyAccJerk-std()-Z
+
++ mean-fBodyAccJerk-meanFreq()-X
+
++ mean-fBodyAccJerk-meanFreq()-Y
+
++ mean-fBodyAccJerk-meanFreq()-Z
+
++ mean-fBodyGyro-mean()-X
+
++ mean-fBodyGyro-mean()-Y
+
++ mean-fBodyGyro-mean()-Z
+
++ mean-fBodyGyro-std()-X
+
++ mean-fBodyGyro-std()-Y
+
++ mean-fBodyGyro-std()-Z
+
++ mean-fBodyGyro-meanFreq()-X
+
++ mean-fBodyGyro-meanFreq()-Y
+
++ mean-fBodyGyro-meanFreq()-Z
+
++ mean-fBodyAccMag-mean()
+
++ mean-fBodyAccMag-std()
+
++ mean-fBodyAccMag-meanFreq()
+
++ mean-fBodyBodyAccJerkMag-mean()
+
++ mean-fBodyBodyAccJerkMag-std()
+
++ mean-fBodyBodyAccJerkMag-meanFreq()
+
++ mean-fBodyBodyGyroMag-mean()
+
++ mean-fBodyBodyGyroMag-std()
+
++ mean-fBodyBodyGyroMag-meanFreq()
+
++ mean-fBodyBodyGyroJerkMag-mean()
+
++ mean-fBodyBodyGyroJerkMag-std()
+
++ mean-fBodyBodyGyroJerkMag-meanFreq()
+
+## References
+
+**[1] Original Study**
+[Jorge L. Reyes-Ortiz(1,2), Davide Anguita(1), Alessandro Ghio(1), Luca Oneto(1) and Xavier Parra(2)
+1 - Smartlab - Non-Linear Complex Systems Laboratory
+DITEN - Università degli Studi di Genova, Genoa (I-16145), Italy.
+2 - CETpD - Technical Research Centre for Dependency Care and Autonomous Living
+Universitat Politècnica de Catalunya (BarcelonaTech). Vilanova i la Geltrú (08800), Spain
+activityrecognition '@' smartlab.ws
+http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones]
+
+**[2] features_info - origial study codebook referenced in the above link**
